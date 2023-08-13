@@ -20,7 +20,7 @@ export const Response = () => {
             <div>
               <img
                 className="max-w-[10rem] md:max-w-sm"
-                src={`/public/${iaAnswer?.img}.png`}
+                src={`/${iaAnswer?.img}.png`}
                 alt=""
               />
             </div>

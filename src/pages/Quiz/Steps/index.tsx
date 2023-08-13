@@ -22,7 +22,7 @@ export const Steps = () => {
                 className="flex flex-col-reverse lg:flex-row gap-3 py-8 desktop:justify-between lg:h-screen overflow-hidden"
                 key={quiz.id}
               >
-                <section className="flex flex-col justify-center max-w-5xl m-auto mt-10 lg:mt-auto lg:max-w-lg xl:max-w-3xl items-center w-full p-5 xl:ml-10 xl:p-10">
+                <section className="flex flex-col justify-center h-full max-w-5xl m-auto mt-10 lg:mt-auto lg:max-w-lg xl:max-w-3xl items-center w-full p-5 xl:ml-10 xl:p-10">
                   <Option options={quiz.options} id={quiz.id} />
                 </section>
                 <section className="w-full p-5 max-w-5xl m-auto desktop:max-w-none h-full desktop:p-10">

@@ -6,6 +6,7 @@ import { quiz } from '../pages/Quiz/db/quiz';
 type IaAnswerProps = {
   title: string;
   recommendations: string;
+  img: string;
 };
 
 type QuizContextProps = {
@@ -35,7 +36,13 @@ export const QuizProvider = ({ children }: QuizProviderProps) => {
   const [currentStep, setCurrentStep] = useState(
     getLocalStorage('@quiz-je:currentStep') ?? 0,
   );
-  const [iaRecommendations, setIaRecommendations] = useState({});
+  const [iaRecommendations, setIaRecommendations] = useState({
+    articles: [
+      {
+        name: '',
+      },
+    ],
+  });
   const [iaAnswer, setIaAnswer] = useState({} as IaAnswerProps);
   const [isSelectedAnswer, setIsSelectedAnswer] = useState(false);
   const totalStep = quiz.length;
@@ -62,39 +69,32 @@ export const QuizProvider = ({ children }: QuizProviderProps) => {
   };
 
   const coursesRecommendations = async (text: any) => {
-    if (!text.length)
-      return alert('Ocorreu um erro ao recomendar materiais de apoio');
-    if (getLocalStorage('example')) return;
-    const response = await fetch('https://api.openai.com/v1/completions', {
-      method: 'POST',
-      body: JSON.stringify({
-        model: 'text-davinci-003',
-        prompt:
-          text +
-          'O texto acima é meu perfil financeiro. Me recomende cursos e artigos gratuitos em português com links. Coloque a resposta em formato JSON válido',
-        max_tokens: 3000,
-        temperature: 0,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      }),
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
-        'Content-Type': 'application/json',
-      },
-    });
-    const result = await response.json();
-    const resp = JSON.parse(result.choices[0].text?.replace('.', ''));
-    console.log(resp);
-    const recommendations = resp.map((res: any) => ({
-      courses: res?.Curso,
-      articles: res?.Artigo,
-    }));
-    saveLocalStorage('example', {
-      courses: resp?.Cursos,
-      articles: resp?.Artigos,
-    });
-    setIaRecommendations(recommendations);
+    // const response = await fetch('https://api.openai.com/v1/completions', {
+    //   method: 'POST',
+    //   body: JSON.stringify({
+    //     model: 'text-davinci-003',
+    //     prompt:
+    //       text +
+    //       'O texto acima é meu perfil financeiro, o que você recomendaria de materiais de estudo em português e gratuito para o meu perfil? Pode ser artigos gratuitos que existem na internet gere pelo menos 5. Coloque a resposta em formato JSON nesse modelo {"articles": [{"name": string}] }',
+    //     max_tokens: 3000,
+    //     temperature: 0,
+    //     top_p: 1,
+    //     frequency_penalty: 0,
+    //     presence_penalty: 0,
+    //   }),
+    //   headers: {
+    //     Authorization: `Bearer ${import.meta.env.VITE_OPENAI_KEY}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+    // const output = await response.json();
+    // const resp = output.choices[0].text;
+    // const jsonResponse = JSON.parse(
+    //   (resp.length > 0 && resp) || JSON.stringify({}),
+    // );
+    // setIaRecommendations({
+    //   articles: jsonResponse?.articles,
+    // });
   };
 
   const ai = async (answers: string[]) => {
@@ -104,7 +104,7 @@ export const QuizProvider = ({ children }: QuizProviderProps) => {
         model: 'text-davinci-003',
         prompt:
           answers.join() +
-          'O texto acima é meu perfil financeiro, o que você recomendaria? E um título para o meu tipo do perfil. Coloque a resposta em formato JSON',
+          'O texto acima é meu perfil financeiro, o que você recomendaria e como posso melhorar? Me dê dicas para melhorar. Escreva para leigos as dicas e as recomendações. E um título para o meu tipo do perfil. Coloque a resposta em formato JSON nesse modelo {"recommendations": ", "title": "", "img": aqui é baseado no meu perfil que pode ser "endividado" ou "economico" ou "investidor" }',
         max_tokens: 3000,
         temperature: 0,
         top_p: 1,
@@ -121,10 +121,11 @@ export const QuizProvider = ({ children }: QuizProviderProps) => {
     const jsonResponse = JSON.parse(
       (resp.length > 0 && resp) || JSON.stringify({}),
     );
-    await coursesRecommendations(jsonResponse?.recomendação);
+    await coursesRecommendations(jsonResponse?.recommendations);
     setIaAnswer({
-      title: jsonResponse?.título,
-      recommendations: jsonResponse?.recomendação,
+      title: jsonResponse?.title,
+      recommendations: jsonResponse?.recommendations,
+      img: jsonResponse?.img,
     });
     localStorage.removeItem('@quiz-je:currentStep');
     for (let i = 0; i < totalStep; i++)

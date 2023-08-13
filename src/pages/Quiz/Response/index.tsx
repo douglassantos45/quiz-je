@@ -7,7 +7,6 @@ import { Feedback } from './Feedback';
 export const Response = () => {
   const { iaRecommendations, iaAnswer } = useQuiz();
   const { open } = useModal();
-  console.log(iaRecommendations);
   return (
     <>
       <header className="fixed top-0 p-8 px-16 text-xl font-bold">
@@ -16,8 +15,15 @@ export const Response = () => {
         </Link>
       </header>
       <main className="">
-        <div className="flex flex-col-reverse gap-3 py-8 desktop:justify-between lg:h-screen overflow-hidden">
-          <section className="flex flex-col justify-center max-w-xl m-auto mt-10 lg:mt-auto desktop:max-w-lg xl:max-w-3xl items-center w-full p-5 ">
+        <div className="flex gap-6 flex-col-reverse md:flex-row  desktop:justify-between lg:h-screen overflow-hidden">
+          <section className="flex md:py-20 h-full justify-start gap-1 md:gap-20 flex-col max-w-xl  lg:mt-auto desktop:max-w-lg xl:max-w-3xl items-center w-full p-5 ">
+            <div>
+              <img
+                className="max-w-[10rem] md:max-w-sm"
+                src={`/public/${iaAnswer?.img}.png`}
+                alt=""
+              />
+            </div>
             <button
               className="flex items-center justify-center max-h-[1.2rem] p-8 bg-purple-700 rounded-lg text-lg font-semibold text-white hover:bg-purple-600 duration-300"
               onClick={open}
@@ -35,7 +41,7 @@ export const Response = () => {
                 {iaAnswer?.recommendations}
               </p>
 
-              <div>
+              {/* <div>
                 Cursos
                 {iaRecommendations?.courses?.map((course: any, key: number) => (
                   <div key={key}>
@@ -48,15 +54,13 @@ export const Response = () => {
               <div>
                 Artigos
                 {iaRecommendations?.articles?.map(
-                  (article: any, key: number) => (
+                  (name: string, key: number) => (
                     <div key={key}>
-                      <a href={article?.Link} target="_blank">
-                        {article?.Nome}
-                      </a>
+                      <p>{name}</p>
                     </div>
                   ),
                 )}
-              </div>
+              </div> */}
             </div>
           </section>
         </div>
